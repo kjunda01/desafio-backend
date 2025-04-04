@@ -1,17 +1,24 @@
-const baseUrl = "http://192.168.1.131:3000";
+const baseUrl = "http://localhost:3000";
+
+// Carregar a lista de clientes ao iniciar a página
+// Verifica se está na página de clientes antes de chamar renderizarClientes
+if (document.getElementById("clientes-container")) {
+  renderizarClientes();
+}
 
 // Função para renderizar a lista de clientes
 async function renderizarClientes() {
   try {
     const response = await fetch(`${baseUrl}/clientes`);
-
-    if (!response.ok) {
-      throw new Error(`Erro ao carregar clientes: ${response.status} ${response.statusText}`);
-    }
-
     const clientes = await response.json();
+
+    if (!response.ok)
+      throw new Error(`Erro ${response.status}: ${response.statusText}`);
+
     const container = document.getElementById("clientes-container");
+
     container.innerHTML = "";
+
     clientes.forEach((cliente) => {
       const clienteCard = document.createElement("div");
       clienteCard.classList.add("cliente-card");
@@ -25,15 +32,19 @@ async function renderizarClientes() {
                     <strong>Idade:</strong> ${cliente.idade} <br>
                 </div>
                 <div class="actions">
-                    <button class="editar" onclick='editarCliente(${JSON.stringify(cliente)})'>Editar</button>
-                    <button class="excluir" onclick="confirmarExcluir(${cliente.id})">Excluir</button>
+                    <button class="editar" onclick='editarCliente(${JSON.stringify(
+                      cliente
+                    )})'>Editar</button>
+                    <button class="excluir" onclick="confirmarExcluir(${
+                      cliente.id
+                    })">Excluir</button>
                 </div>
             `;
 
       container.appendChild(clienteCard);
     });
   } catch (error) {
-    alert(error.message);
+    alert(`Não foi possível carregar os clientes. ${error}`);
   }
 }
 
@@ -67,13 +78,15 @@ async function excluirCliente(id) {
     });
 
     if (!response.ok) {
-      throw new Error(`Erro ao excluir cliente: ${response.status} ${response.statusText}`);
+      throw new Error(
+        `Erro ao excluir cliente: ${response.status} ${response.statusText}`
+      );
     }
 
     alert("Cliente excluído com sucesso!");
     renderizarClientes();
   } catch (error) {
-    alert(error.message);
+    alert(`Não foi possível excluir o cliente. ${error.message}`);
   }
 }
 
@@ -85,7 +98,9 @@ async function criarCliente() {
     const idade = document.getElementById("cliente-idade").value;
 
     // Limpa mensagens de erros anteriores
-    document.querySelectorAll(".erro-msg").forEach((element) => (element.innerHTML = ""));
+    document
+      .querySelectorAll(".erro-msg")
+      .forEach((element) => (element.innerHTML = ""));
 
     const response = await fetch(`${baseUrl}/clientes`, {
       method: "POST",
@@ -149,10 +164,12 @@ async function carregarDadosCliente() {
   const email = params.get("email");
   const idade = params.get("idade");
 
+  // Preenche os campos do formulário com os dados do produto
   if (id && nome && sobrenome && email && idade) {
     document.getElementById("cliente-id").innerHTML = decodeURIComponent(id);
     document.getElementById("cliente-nome").value = decodeURIComponent(nome);
-    document.getElementById("cliente-sobrenome").value = decodeURIComponent(sobrenome);
+    document.getElementById("cliente-sobrenome").value =
+      decodeURIComponent(sobrenome);
     document.getElementById("cliente-email").value = decodeURIComponent(email);
     document.getElementById("cliente-idade").value = decodeURIComponent(idade);
   } else {
@@ -230,9 +247,4 @@ async function atualizarCliente() {
 // Chama a função para carregar os dados do cliente ao carregar a página de edição
 if (window.location.pathname.includes("atualizarCliente.html")) {
   carregarDadosCliente();
-}
-
-// Carregar a lista de clientes ao iniciar a página
-if (document.getElementById("clientes-container")) {
-  renderizarClientes();
 }

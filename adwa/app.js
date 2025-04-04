@@ -20,7 +20,7 @@ const app = express();
 app.use(morgan('dev'));
 
 // Usa o middleware CORS para permitir requisições de diferentes origens
-app.use(cors());  // Permite todas as origens. Você pode customizar mais se necessário.
+app.use(cors());
 
 // Middleware para analisar JSON nas requisições.
 app.use(express.json());
@@ -37,7 +37,6 @@ app.get('/', (req, res) => {
     res.send('Bem-vindo à API!');
 });
 
-// Define a porta do servidor a partir da variável de ambiente ou usa a porta 3000 como padrão.
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
